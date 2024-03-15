@@ -2,25 +2,30 @@
 
 #################################
 #################################
-# This scripts creates symbolic links of given files
-# while renaming the copy according to a tab delimited list.
-# Specifically, this was created for sequencing data from the
-# Cologne Center for Genomics.
+# This scripts checks MD5 and creates symbolic
+# links of given files while renaming the copy
+# according to a tab delimited list.
+# Specifically, this was created for sequencing
+# data from the Cologne Center for Genomics.
+# Symlinks are links that point to the original
+# file and do not consume disk space. You can also
+# set move_files=1 to actually move the files.
 #################################
 #################################
 
-
-### CONFIG ###
 
 # Define your source and target directories
-src_dir="/home/philipp/CCG/bastet2.ccg.uni-koeln.de/downloads/NGS_MYU10_hsmail_A006200382"
+src_dir="/home/philipp/CCG/bastet2.ccg.uni-koeln.de/downloads/NGS_MYU10_hsmail_A006200382Kopie"
 target_dir="/home/philipp/CCG/gz"
 
 # Define the path to your tab-delimited text file
-list_file="/home/philipp/CCG/bastet2.ccg.uni-koeln.de/downloads/NGS_MYU10_hsmail_A006200382/Sample_Names.tab"
+list_file="/home/philipp/CCG/bastet2.ccg.uni-koeln.de/downloads/NGS_MYU10_hsmail_A006200382Kopie/Sample_Names.tab"
 
 # Set this to 1 if you want to check MD5 checksums, 0 otherwise
 check_md5=1
+
+# set this to 1 if you want to actualy move your original files instead of creating a symlink
+move_files=0
 
 # Path and filename of md5 checksums
 hash_dir=$src_dir
@@ -103,6 +108,10 @@ do
         continue
     fi
 
-    # Create the symbolic link in the target directory
-    ln -s "$file" "$target_dir/$base"
+	if [ "$move_files" -eq 0 ];	then
+		# Create the symbolic link in the target directory
+		ln -s "$file" "$target_dir/$base"
+	elif [ "$move_files" -eq 1 ]; then
+		mv "$file" "$target_dir/$base"
+	fi
 done
